@@ -1,25 +1,26 @@
 import React, { useState, useMemo } from 'react';
+import rangeEnergyLogo from './Rangeenergylogo.svg';
 
 // Range Energy Brand Colors
 const colors = {
-  warmWhite: '#fef9f3',
+  warmWhite: '#ffffff',
   lightGray: '#f3f3f3',
   darkOlive: '#353831',
   deepTeal: '#0f262d',
   mint: '#86e3a6',
-  softBlue: '#abc2d2',
+  softBlue: '#758fa3',
   sage: '#5eaa98',
   forest: '#21543b',
-  tealAccent: '#03666c',
+  tealAccent: '#758fa3',
   coral: '#d1624b',
   gold: '#e2a347',
   lime: '#ede76e',
   mutedSage: '#7b896f',
-  gray900: '#212121',
-  gray700: '#464646',
+  gray900: '#191919',
+  gray700: '#353831',
   gray600: '#646464',
   gray400: '#969696',
-  gray200: '#c8c8c8',
+  gray200: '#d9e1e7',
 };
 
 const formatCurrency = (val) => {
@@ -35,8 +36,8 @@ const formatNumber = (val, decimals = 0) => {
 
 // Slider Component
 const Slider = ({ label, value, onChange, min, max, step, unit, prefix = '' }) => (
-  <div style={{ marginBottom: '1.5rem' }}>
-    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '0.5rem' }}>
+  <div style={{ marginBottom: '13px' }}>
+    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '8px' }}>
       <label style={{ 
         fontFamily: "'Barlow', Arial, sans-serif", 
         fontSize: '14px', 
@@ -49,7 +50,7 @@ const Slider = ({ label, value, onChange, min, max, step, unit, prefix = '' }) =
         fontFamily: "'Inter', system-ui, sans-serif",
         fontSize: '16px', 
         fontWeight: 500, 
-        color: colors.tealAccent 
+        color: colors.gray900
       }}>
         {prefix}{typeof value === 'number' && value % 1 !== 0 ? value.toFixed(2) : value}{unit}
       </span>
@@ -64,27 +65,27 @@ const Slider = ({ label, value, onChange, min, max, step, unit, prefix = '' }) =
       style={{
         width: '100%',
         height: '6px',
-        borderRadius: '3px',
-        background: `linear-gradient(to right, ${colors.mint} 0%, ${colors.mint} ${((value - min) / (max - min)) * 100}%, ${colors.gray200} ${((value - min) / (max - min)) * 100}%, ${colors.gray200} 100%)`,
+        borderRadius: '4px',
+        background: `linear-gradient(to right, ${colors.softBlue} 0%, ${colors.softBlue} ${((value - min) / (max - min)) * 100}%, rgba(117, 143, 163, 0.1) ${((value - min) / (max - min)) * 100}%, rgba(117, 143, 163, 0.1) 100%)`,
         outline: 'none',
         cursor: 'pointer',
         WebkitAppearance: 'none',
       }}
     />
-    <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '4px' }}>
-      <span style={{ fontSize: '11px', color: colors.gray600 }}>{prefix}{min}{unit}</span>
-      <span style={{ fontSize: '11px', color: colors.gray600 }}>{prefix}{max}{unit}</span>
+    <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '6px' }}>
+      <span style={{ fontFamily: "'Inter', system-ui, sans-serif", fontSize: '11px', color: colors.darkOlive }}>{prefix}{min}{unit}</span>
+      <span style={{ fontFamily: "'Inter', system-ui, sans-serif", fontSize: '11px', color: colors.darkOlive }}>{prefix}{max}{unit}</span>
     </div>
   </div>
 );
 
 // Toggle Switch Component
 const Toggle = ({ label, checked, onChange }) => (
-  <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
     <span style={{ 
       fontFamily: "'Inter', system-ui, sans-serif",
       fontSize: '14px', 
-      color: colors.darkOlive 
+      color: colors.darkOlive,
     }}>
       {label}
     </span>
@@ -92,7 +93,7 @@ const Toggle = ({ label, checked, onChange }) => (
       onClick={() => onChange(!checked)}
       style={{
         width: '48px',
-        height: '26px',
+        height: '25px',
         borderRadius: '13px',
         border: 'none',
         background: checked ? colors.mint : colors.gray200,
@@ -104,10 +105,10 @@ const Toggle = ({ label, checked, onChange }) => (
       <div style={{
         width: '22px',
         height: '22px',
-        borderRadius: '50%',
+        borderRadius: '12px',
         background: 'white',
         position: 'absolute',
-        top: '2px',
+        top: '1.5px',
         left: checked ? '24px' : '2px',
         transition: 'left 0.2s ease',
         boxShadow: '0 1px 3px rgba(0,0,0,0.2)',
@@ -117,31 +118,32 @@ const Toggle = ({ label, checked, onChange }) => (
 );
 
 // Metric Card Component
-const MetricCard = ({ label, value, subtext, highlight = false, icon }) => (
-  <div style={{
-    background: highlight ? colors.deepTeal : colors.lightGray,
-    borderRadius: '12px',
-    padding: '1.25rem',
-    flex: 1,
-    minWidth: '140px',
-  }}>
+const MetricCard = ({ label, value, subtext, highlight = false, icon, divider = false }) => (
+  <div
+    className={`metric-card${highlight ? ' metric-card--highlight' : ''}${divider ? ' metric-card--divider' : ''}`}
+    style={{
+      background: highlight ? colors.mint : 'transparent',
+      borderRadius: '0',
+      padding: '25px',
+      flex: 1,
+      minWidth: 0,
+    }}
+  >
     {icon && <div style={{ marginBottom: '8px', fontSize: '24px' }}>{icon}</div>}
     <div style={{ 
       fontFamily: "'Barlow', Arial, sans-serif",
-      fontSize: '11px', 
-      fontWeight: 700,
-      textTransform: 'uppercase',
-      letterSpacing: '0.12em',
-      color: highlight ? colors.sage : colors.gray600,
-      marginBottom: '4px',
+      fontSize: '16px', 
+      fontWeight: 400,
+      color: highlight ? colors.gray900 : colors.darkOlive,
+      marginBottom: '10px',
     }}>
       {label}
     </div>
     <div style={{ 
       fontFamily: "'Barlow', Arial, sans-serif",
-      fontSize: '28px', 
-      fontWeight: 500, 
-      color: highlight ? colors.warmWhite : colors.darkOlive,
+      fontSize: '26px', 
+      fontWeight: 600, 
+      color: colors.gray900,
       lineHeight: 1.1,
     }}>
       {value}
@@ -150,8 +152,9 @@ const MetricCard = ({ label, value, subtext, highlight = false, icon }) => (
       <div style={{ 
         fontFamily: "'Inter', system-ui, sans-serif",
         fontSize: '12px', 
-        color: highlight ? colors.softBlue : colors.gray600,
-        marginTop: '4px',
+        color: highlight ? colors.darkOlive : colors.softBlue,
+        marginTop: '8px',
+        lineHeight: 1.25,
       }}>
         {subtext}
       </div>
@@ -161,37 +164,37 @@ const MetricCard = ({ label, value, subtext, highlight = false, icon }) => (
 
 // Bar Chart Component
 const BarChart = ({ data, maxValue }) => (
-  <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+  <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
     {data.map((item, i) => (
       <div key={i}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
+        <div className="bar-chart-row" style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
           <span style={{ 
             fontFamily: "'Inter', system-ui, sans-serif",
-            fontSize: '13px', 
+            fontSize: '14px', 
             color: colors.darkOlive 
           }}>
             {item.label}
           </span>
           <span style={{ 
             fontFamily: "'Inter', system-ui, sans-serif",
-            fontSize: '13px', 
-            fontWeight: 500,
+            fontSize: '14px', 
+            fontWeight: 400,
             color: colors.darkOlive 
           }}>
             {formatCurrency(item.value)}
           </span>
         </div>
         <div style={{ 
-          height: '24px', 
-          background: colors.gray200, 
-          borderRadius: '4px',
+          height: '5px', 
+          background: 'rgba(134, 227, 166, 0.1)', 
+          borderRadius: '0',
           overflow: 'hidden',
         }}>
           <div style={{
             height: '100%',
             width: `${Math.max(0, (item.value / maxValue) * 100)}%`,
-            background: item.color,
-            borderRadius: '4px',
+            background: colors.mint,
+            borderRadius: '0',
             transition: 'width 0.3s ease',
           }} />
         </div>
@@ -206,51 +209,55 @@ const ComparisonBar = ({ label, baseline, withRange, maxValue }) => {
   const savingsPercent = baseline > 0 ? (savings / baseline) * 100 : 0;
   
   return (
-    <div style={{ marginBottom: '1.5rem' }}>
-      <div style={{ 
-        fontFamily: "'Barlow', Arial, sans-serif",
-        fontSize: '14px', 
-        fontWeight: 500,
-        color: colors.darkOlive,
-        marginBottom: '8px',
-      }}>
-        {label}
+    <div className="comparison-bar" style={{ marginBottom: '30px' }}>
+      <div className="comparison-bar__header" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '10px', gap: '12px' }}>
+        <div style={{ 
+          fontFamily: "'Barlow', Arial, sans-serif",
+          fontSize: '18px', 
+          fontWeight: 500,
+          color: colors.darkOlive,
+        }}>
+          {label}
+        </div>
+        {savings > 0 && (
+        <div className="comparison-bar__badge" style={{
+            background: 'rgba(134, 227, 166, 0.1)',
+            fontFamily: "'Inter', system-ui, sans-serif",
+            fontSize: '14px',
+            fontWeight: 500,
+            color: colors.gray900,
+            padding: '7px 10px',
+          }}>
+            Save {formatCurrency(savings)} ({savingsPercent.toFixed(0)}%)
+          </div>
+        )}
       </div>
-      <div style={{ display: 'flex', gap: '8px', alignItems: 'center', marginBottom: '4px' }}>
-        <span style={{ fontSize: '12px', color: colors.gray600, width: '70px' }}>Baseline</span>
-        <div style={{ flex: 1, height: '20px', background: colors.gray200, borderRadius: '4px', overflow: 'hidden' }}>
+      <div style={{ marginBottom: '10px' }}>
+        <div className="comparison-bar__labels" style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px', gap: '12px' }}>
+          <span style={{ fontFamily: "'Inter', system-ui, sans-serif", fontSize: '14px', color: colors.darkOlive }}>Baseline</span>
+          <span style={{ fontFamily: "'Inter', system-ui, sans-serif", fontSize: '14px', color: colors.darkOlive }}>{formatCurrency(baseline)}</span>
+        </div>
+        <div style={{ height: '5px', background: 'rgba(209, 98, 75, 0.25)', overflow: 'hidden' }}>
           <div style={{
             height: '100%',
             width: `${(baseline / maxValue) * 100}%`,
             background: colors.coral,
-            borderRadius: '4px',
           }} />
         </div>
-        <span style={{ fontSize: '12px', fontWeight: 500, width: '80px', textAlign: 'right' }}>{formatCurrency(baseline)}</span>
       </div>
-      <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-        <span style={{ fontSize: '12px', color: colors.gray600, width: '70px' }}>With Range</span>
-        <div style={{ flex: 1, height: '20px', background: colors.gray200, borderRadius: '4px', overflow: 'hidden' }}>
+      <div>
+        <div style={{ height: '5px', background: 'rgba(134, 227, 166, 0.25)', overflow: 'hidden', marginBottom: '8px' }}>
           <div style={{
             height: '100%',
             width: `${(withRange / maxValue) * 100}%`,
             background: colors.mint,
-            borderRadius: '4px',
           }} />
         </div>
-        <span style={{ fontSize: '12px', fontWeight: 500, width: '80px', textAlign: 'right' }}>{formatCurrency(withRange)}</span>
-      </div>
-      {savings > 0 && (
-        <div style={{ 
-          textAlign: 'right', 
-          marginTop: '4px',
-          fontSize: '12px',
-          color: colors.forest,
-          fontWeight: 500,
-        }}>
-          Save {formatCurrency(savings)} ({savingsPercent.toFixed(0)}%)
+        <div className="comparison-bar__labels" style={{ display: 'flex', justifyContent: 'space-between', gap: '12px' }}>
+          <span style={{ fontFamily: "'Inter', system-ui, sans-serif", fontSize: '14px', fontWeight: 500, color: colors.gray900 }}>With Range Energy</span>
+          <span style={{ fontFamily: "'Inter', system-ui, sans-serif", fontSize: '14px', fontWeight: 500, color: colors.gray900 }}>{formatCurrency(withRange)}</span>
         </div>
-      )}
+      </div>
     </div>
   );
 };
@@ -399,77 +406,256 @@ export default function RangeSavingsCalculator() {
   }, [milesPerDay, dieselPrice, electricityCost, baselineMpg, truHoursPerDay, includeTru]);
 
   return (
-    <div style={{
-      fontFamily: "'Inter', system-ui, sans-serif",
-      background: colors.warmWhite,
-      minHeight: '100vh',
-      padding: '2rem',
-    }}>
+    <div
+      className="app-shell"
+      style={{
+        fontFamily: "'Inter', system-ui, sans-serif",
+        background: colors.lightGray,
+        minHeight: '100vh',
+        padding: '30px 100px 40px',
+      }}
+    >
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;700&family=Inter:wght@400;500&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Inter:ital,wght@0,400;0,500;0,600;1,400&display=swap');
+        * {
+          box-sizing: border-box;
+        }
+        .app-frame {
+          width: 100%;
+          max-width: 100%;
+          margin: 0 auto;
+        }
+        .top-nav {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 24px;
+          margin-bottom: 40px;
+        }
+        .nav-links {
+          display: flex;
+          align-items: center;
+          justify-content: flex-end;
+          flex-wrap: wrap;
+          gap: 25px;
+        }
+        .hero-header {
+          text-align: left;
+          margin-bottom: 75px;
+          max-width: 900px;
+        }
+        .hero-title {
+          font-size: clamp(42px, 5vw, 60px);
+          line-height: 0.98;
+        }
+        .hero-subtitle {
+          font-size: clamp(18px, 2vw, 20px);
+          line-height: 1.35;
+          max-width: 760px;
+        }
+        .main-layout {
+          display: grid;
+          grid-template-columns: minmax(0, 30%) minmax(0, 70%);
+          gap: 75px;
+          align-items: start;
+        }
+        .controls-column,
+        .results-column,
+        .metric-card,
+        .ownership-panel,
+        .category-panel {
+          min-width: 0;
+        }
+        .metrics-row {
+          display: grid;
+          grid-template-columns: repeat(4, minmax(0, 1fr));
+          gap: 0;
+        }
+        .metric-card--divider {
+          border-left: 1px solid rgba(117, 143, 163, 0.22);
+        }
+        .ownership-header,
+        .totals-row {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 16px;
+        }
+        .detailed-grid {
+          display: grid;
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+          gap: 2rem;
+        }
+        .bar-chart-row,
+        .comparison-bar__labels {
+          display: flex;
+          justify-content: space-between;
+          gap: 12px;
+        }
+        .disclaimer {
+          max-width: 100%;
+        }
         input[type="range"]::-webkit-slider-thumb {
           -webkit-appearance: none;
-          width: 20px;
-          height: 20px;
+          width: 15px;
+          height: 15px;
           border-radius: 50%;
-          background: ${colors.tealAccent};
+          background: white;
           cursor: pointer;
-          border: 3px solid white;
-          box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+          border: 1px solid rgba(117, 143, 163, 0.5);
+          box-shadow: 0 1px 2px rgba(0,0,0,0.15);
         }
         input[type="range"]::-moz-range-thumb {
-          width: 20px;
-          height: 20px;
+          width: 15px;
+          height: 15px;
           border-radius: 50%;
-          background: ${colors.tealAccent};
+          background: white;
           cursor: pointer;
-          border: 3px solid white;
-          box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+          border: 1px solid rgba(117, 143, 163, 0.5);
+          box-shadow: 0 1px 2px rgba(0,0,0,0.15);
+        }
+        @media (max-width: 1100px) {
+          .app-shell {
+            padding: 30px 50px 40px !important;
+          }
+          .top-nav {
+            flex-direction: column;
+            align-items: flex-start;
+          }
+          .nav-links {
+            width: 100%;
+            justify-content: flex-start;
+            gap: 18px;
+          }
+          .main-layout {
+            gap: 40px;
+          }
+          .metrics-row {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+          }
+          .metric-card--divider {
+            border-left: none;
+            border-top: 1px solid rgba(117, 143, 163, 0.22);
+          }
+          .metric-card--divider:nth-child(2) {
+            border-top: none;
+          }
+          .detailed-grid {
+            grid-template-columns: 1fr;
+            gap: 24px;
+          }
+        }
+        @media (max-width: 900px) {
+          .hero-header {
+            margin-bottom: 48px;
+          }
+          .main-layout {
+            grid-template-columns: 1fr;
+            gap: 36px;
+          }
+        }
+        @media (max-width: 640px) {
+          .app-shell {
+            padding: 24px 20px 32px !important;
+          }
+          .top-nav {
+            margin-bottom: 28px;
+          }
+          .nav-links {
+            gap: 14px 18px;
+          }
+          .nav-links button {
+            width: 100%;
+          }
+          .hero-header {
+            margin-bottom: 36px;
+          }
+          .metrics-row {
+            grid-template-columns: 1fr;
+          }
+          .metric-card--divider {
+            border-top: 1px solid rgba(117, 143, 163, 0.22);
+          }
+          .ownership-header,
+          .totals-row,
+          .comparison-bar__header,
+          .bar-chart-row,
+          .comparison-bar__labels {
+            flex-direction: column;
+            align-items: flex-start;
+          }
+          .ownership-panel,
+          .category-panel {
+            padding: 20px !important;
+          }
+          .totals-secondary {
+            text-align: left !important;
+          }
         }
       `}</style>
       
-      <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
+      <div className="app-frame">
+        <div className="top-nav">
+          <img src={rangeEnergyLogo} alt="Range Energy" style={{ width: '180px', height: 'auto', display: 'block' }} />
+          <div className="nav-links">
+            <span style={{ fontSize: '16px', color: colors.gray900 }}>Calculator</span>
+            <span style={{ fontSize: '16px', color: colors.gray900 }}>Team</span>
+            <span style={{ fontSize: '16px', color: colors.gray900 }}>News</span>
+            <span style={{ fontSize: '16px', color: colors.gray900 }}>Careers</span>
+            <button
+              type="button"
+              style={{
+                border: 'none',
+                background: colors.mint,
+                borderRadius: '50px',
+                padding: '14px 20px',
+                fontSize: '16px',
+                color: colors.gray900,
+                cursor: 'pointer',
+              }}
+            >
+              Contact Us
+            </button>
+          </div>
+        </div>
+
         {/* Header */}
-        <div style={{ textAlign: 'center', marginBottom: '2.5rem' }}>
+        <div className="hero-header">
           <h1 style={{
             fontFamily: "'Barlow', Arial, sans-serif",
-            fontSize: '36px',
-            fontWeight: 400,
-            color: colors.darkOlive,
+            fontWeight: 700,
+            color: colors.gray900,
             margin: 0,
-          }}>
+          }} className="hero-title">
             Range eTrailer Savings Calculator
           </h1>
           <p style={{
-            fontSize: '16px',
-            color: colors.gray600,
-            marginTop: '8px',
-          }}>
+            fontFamily: "'Inter', system-ui, sans-serif",
+            color: colors.gray900,
+            marginTop: '14px',
+            marginBottom: 0,
+          }} className="hero-subtitle">
             Calculate your potential annual savings with Range Energy's electrified trailer system
           </p>
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: '380px 1fr', gap: '2rem' }}>
+        <div className="main-layout">
           {/* Left Panel - Inputs */}
-          <div style={{
-            background: 'white',
-            borderRadius: '16px',
-            padding: '1.5rem',
-            boxShadow: '0 1px 3px rgba(0,0,0,0.08)',
+          <div className="controls-column" style={{
+            borderRadius: '10px',
             height: 'fit-content',
           }}>
             <h2 style={{
               fontFamily: "'Barlow', Arial, sans-serif",
-              fontSize: '18px',
-              fontWeight: 500,
+              fontSize: '22px',
+              fontWeight: 700,
               color: colors.darkOlive,
               marginTop: 0,
-              marginBottom: '1.5rem',
-              paddingBottom: '0.75rem',
-              borderBottom: `2px solid ${colors.mint}`,
+              marginBottom: '18px',
             }}>
               Your fleet parameters
             </h2>
+            <div style={{ borderTop: '1px solid rgba(117, 143, 163, 0.45)', marginBottom: '24px' }} />
             
             <Slider
               label="Average daily miles"
@@ -514,11 +700,11 @@ export default function RangeSavingsCalculator() {
             />
 
             <div style={{ 
-              borderTop: `1px solid ${colors.gray200}`, 
+              borderTop: '1px solid rgba(117, 143, 163, 0.45)', 
               paddingTop: '1.5rem',
               marginTop: '0.5rem',
             }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
                 <Toggle 
                   label="Include refrigerated trailer (TRU)" 
                   checked={includeTru} 
@@ -541,17 +727,24 @@ export default function RangeSavingsCalculator() {
 
             {/* Key Stats Summary */}
             <div style={{
-              background: colors.lightGray,
-              borderRadius: '12px',
-              padding: '1rem',
+              background: 'rgba(117, 143, 163, 0.05)',
+              borderRadius: '0',
+              padding: '15px',
               marginTop: '1rem',
             }}>
-              <div style={{ fontSize: '12px', color: colors.gray600, marginBottom: '8px' }}>
-                Annual mileage: <strong style={{ color: colors.darkOlive }}>{formatNumber(calculations.annualMileage)} miles</strong>
+              <div style={{ fontSize: '14px', color: colors.gray900, marginBottom: '10px' }}>
+                Annual mileage: <strong style={{ color: colors.gray900 }}>{formatNumber(calculations.annualMileage)} miles</strong>
               </div>
-              <div style={{ fontSize: '12px', color: colors.gray600 }}>
-                Improved fuel economy: <strong style={{ color: colors.forest }}>{calculations.withRangeMpg.toFixed(1)} mpg</strong>
-                <span style={{ color: colors.mint, marginLeft: '6px' }}>
+              <div style={{ fontSize: '14px', color: colors.gray900 }}>
+                Improved fuel economy: <strong style={{ color: colors.gray900 }}>{calculations.withRangeMpg.toFixed(1)} mpg</strong>
+                <span style={{ 
+                  color: colors.gray900,
+                  marginLeft: '8px',
+                  background: colors.mint,
+                  fontSize: '12px',
+                  padding: '2px 5px',
+                  display: 'inline-block'
+                }}>
                   (+{calculations.mpgImprovement.toFixed(0)}%)
                 </span>
               </div>
@@ -559,9 +752,17 @@ export default function RangeSavingsCalculator() {
           </div>
 
           {/* Right Panel - Results */}
-          <div>
+          <div className="results-column">
             {/* Top Metrics Row */}
-            <div style={{ display: 'flex', gap: '1rem', marginBottom: '1.5rem', flexWrap: 'wrap' }}>
+            <div className="metrics-row" style={{ 
+              marginBottom: 0, 
+              border: '0.5px solid rgba(117, 143, 163, 0.5)',
+              borderBottom: 'none',
+              borderTopLeftRadius: '10px',
+              borderTopRightRadius: '10px',
+              overflow: 'hidden',
+              background: 'rgba(134, 227, 166, 0.1)',
+            }}>
               <MetricCard
                 label="Annual savings"
                 value={formatCurrency(calculations.savings.total)}
@@ -572,48 +773,54 @@ export default function RangeSavingsCalculator() {
                 label="Fuel saved"
                 value={`${formatNumber(calculations.fuel.totalGallons)} gal`}
                 subtext="per year"
+                divider
               />
               <MetricCard
                 label="CO₂ reduced"
                 value={`${formatNumber(calculations.co2.annual, 1)} tons`}
                 subtext="per year"
+                divider
               />
               <MetricCard
                 label="CO₂ reduced"
                 value={`${formatNumber(calculations.co2.lifetime, 0)} tons`}
                 subtext={`over ${assetLifetime} years`}
+                divider
               />
             </div>
 
             {/* TCO Breakdown Section */}
-            <div style={{
+            <div className="ownership-panel" style={{
               background: 'white',
-              borderRadius: '16px',
-              padding: '1.5rem',
-              boxShadow: '0 1px 3px rgba(0,0,0,0.08)',
-              marginBottom: '1.5rem',
+              border: '0.5px solid rgba(117, 143, 163, 0.5)',
+              borderTop: 'none',
+              borderBottom: 'none',
+              borderRadius: 0,
+              padding: '25px',
+              marginBottom: 0,
             }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+              <div className="ownership-header" style={{ marginBottom: '1.5rem' }}>
                 <h2 style={{
                   fontFamily: "'Barlow', Arial, sans-serif",
-                  fontSize: '18px',
-                  fontWeight: 500,
+                  fontSize: '24px',
+                  fontWeight: 700,
                   color: colors.darkOlive,
                   margin: 0,
                 }}>
                   Annual cost of ownership
                 </h2>
-                <div style={{ display: 'flex', gap: '8px' }}>
+                <div style={{ display: 'flex', gap: '15px', alignItems: 'center' }}>
                   <button
                     onClick={() => setShowDetailedView(false)}
                     style={{
-                      padding: '6px 14px',
-                      borderRadius: '6px',
+                      padding: '6px 0',
+                      borderRadius: 0,
                       border: 'none',
-                      background: !showDetailedView ? colors.tealAccent : colors.lightGray,
-                      color: !showDetailedView ? 'white' : colors.gray700,
+                      borderBottom: !showDetailedView ? `2px solid ${colors.mint}` : '2px solid transparent',
+                      background: 'transparent',
+                      color: !showDetailedView ? colors.gray900 : colors.darkOlive,
                       fontSize: '13px',
-                      fontWeight: 500,
+                      fontWeight: 400,
                       cursor: 'pointer',
                       transition: 'all 0.2s ease',
                     }}
@@ -623,13 +830,14 @@ export default function RangeSavingsCalculator() {
                   <button
                     onClick={() => setShowDetailedView(true)}
                     style={{
-                      padding: '6px 14px',
-                      borderRadius: '6px',
+                      padding: '6px 0',
+                      borderRadius: 0,
                       border: 'none',
-                      background: showDetailedView ? colors.tealAccent : colors.lightGray,
-                      color: showDetailedView ? 'white' : colors.gray700,
+                      borderBottom: showDetailedView ? `2px solid ${colors.mint}` : '2px solid transparent',
+                      background: 'transparent',
+                      color: showDetailedView ? colors.gray900 : colors.darkOlive,
                       fontSize: '13px',
-                      fontWeight: 500,
+                      fontWeight: 400,
                       cursor: 'pointer',
                       transition: 'all 0.2s ease',
                     }}
@@ -673,7 +881,7 @@ export default function RangeSavingsCalculator() {
                 </div>
               ) : (
                 /* Detailed View */
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem' }}>
+                <div className="detailed-grid">
                   <div>
                     <h3 style={{
                       fontFamily: "'Barlow', Arial, sans-serif",
@@ -759,45 +967,40 @@ export default function RangeSavingsCalculator() {
               )}
 
               {/* Total Savings Summary Bar */}
-              <div style={{
-                background: colors.deepTeal,
-                borderRadius: '12px',
-                padding: '1.25rem',
-                marginTop: '1.5rem',
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
+              <div className="totals-row" style={{
+                background: '#ffffff',
+                borderTop: '1px solid rgba(117, 143, 163, 0.2)',
+                padding: '10px 0 20px',
+                marginTop: '10px',
               }}>
                 <div>
                   <div style={{ 
                     fontFamily: "'Barlow', Arial, sans-serif",
-                    fontSize: '13px', 
-                    fontWeight: 700,
-                    textTransform: 'uppercase',
-                    letterSpacing: '0.1em',
-                    color: colors.sage,
-                    marginBottom: '4px',
+                    fontSize: '16px',
+                    fontWeight: 400,
+                    color: colors.softBlue,
+                    marginBottom: '5px',
                   }}>
                     Net annual savings
                   </div>
                   <div style={{
                     fontFamily: "'Barlow', Arial, sans-serif",
-                    fontSize: '32px',
-                    fontWeight: 500,
-                    color: colors.mint,
+                    fontSize: '42px',
+                    fontWeight: 600,
+                    color: colors.gray900,
                   }}>
                     {formatCurrency(calculations.savings.total)}
                   </div>
                 </div>
-                <div style={{ textAlign: 'right' }}>
-                  <div style={{ fontSize: '13px', color: colors.softBlue, marginBottom: '4px' }}>
+                <div style={{ textAlign: 'right' }} className="totals-secondary">
+                  <div style={{ fontFamily: "'Barlow', Arial, sans-serif", fontSize: '16px', color: colors.softBlue, marginBottom: '5px' }}>
                     Lifetime savings ({assetLifetime} years)
                   </div>
                   <div style={{
                     fontFamily: "'Barlow', Arial, sans-serif",
-                    fontSize: '24px',
-                    fontWeight: 500,
-                    color: colors.warmWhite,
+                    fontSize: '42px',
+                    fontWeight: 600,
+                    color: colors.gray900,
                   }}>
                     {formatCurrency(calculations.lifetimeSavings)}
                   </div>
@@ -806,19 +1009,21 @@ export default function RangeSavingsCalculator() {
             </div>
 
             {/* Savings Breakdown Cards */}
-            <div style={{
-              background: 'white',
-              borderRadius: '16px',
-              padding: '1.5rem',
-              boxShadow: '0 1px 3px rgba(0,0,0,0.08)',
+            <div className="category-panel" style={{
+              background: 'rgba(255, 255, 255, 0.5)',
+              border: '0.5px solid rgba(117, 143, 163, 0.5)',
+              borderTop: 'none',
+              borderBottomLeftRadius: 0,
+              borderBottomRightRadius: 0,
+              padding: '25px',
             }}>
               <h2 style={{
                 fontFamily: "'Barlow', Arial, sans-serif",
-                fontSize: '18px',
-                fontWeight: 500,
+                fontSize: '20px',
+                fontWeight: 700,
                 color: colors.darkOlive,
                 marginTop: 0,
-                marginBottom: '1.25rem',
+                marginBottom: '30px',
               }}>
                 Annual savings by category
               </h2>
@@ -844,7 +1049,7 @@ export default function RangeSavingsCalculator() {
 
 
             {/* Disclaimer */}
-            <p style={{
+            <p className="disclaimer" style={{
               fontSize: '12px',
               color: colors.gray600,
               marginTop: '1.5rem',
