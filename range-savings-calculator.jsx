@@ -430,7 +430,7 @@ export default function RangeSavingsCalculator() {
           align-items: center;
           justify-content: space-between;
           gap: 24px;
-          margin-bottom: 40px;
+          margin-bottom: 75px;
         }
         .nav-links {
           display: flex;
@@ -521,6 +521,7 @@ export default function RangeSavingsCalculator() {
           .top-nav {
             flex-direction: column;
             align-items: flex-start;
+            margin-bottom: 56px;
           }
           .nav-links {
             width: 100%;
@@ -559,7 +560,7 @@ export default function RangeSavingsCalculator() {
             padding: 24px 20px 32px !important;
           }
           .top-nav {
-            margin-bottom: 28px;
+            margin-bottom: 40px;
           }
           .nav-links {
             gap: 14px 18px;
