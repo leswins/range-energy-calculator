@@ -429,15 +429,53 @@ export default function RangeSavingsCalculator() {
           display: flex;
           align-items: center;
           justify-content: space-between;
-          gap: 24px;
+          gap: 32px;
           margin-bottom: 75px;
+        }
+        .brand-img {
+          width: 140px;
+          height: 46px;
+          object-fit: contain;
+          display: block;
+          flex-shrink: 0;
+        }
+        .brand-link {
+          display: inline-flex;
+          flex-shrink: 0;
         }
         .nav-links {
           display: flex;
           align-items: center;
           justify-content: flex-end;
-          flex-wrap: wrap;
-          gap: 25px;
+          flex-wrap: nowrap;
+          gap: 30px;
+        }
+        .nav-link {
+          font-family: 'Inter', system-ui, sans-serif;
+          font-size: 16px;
+          font-weight: 400;
+          line-height: 1.3;
+          color: #000000;
+          text-decoration: none;
+          white-space: nowrap;
+        }
+        .nav-cta {
+          border: none;
+          background: rgba(134, 227, 166, 0.25);
+          border-radius: 999px;
+          padding: 15px 25px;
+          min-height: 46px;
+          font-family: 'Inter', system-ui, sans-serif;
+          font-size: 16px;
+          font-weight: 400;
+          line-height: 1;
+          color: #000000;
+          cursor: pointer;
+          white-space: nowrap;
+          transition: background-color 300ms ease;
+        }
+        .nav-cta:hover {
+          background: #86e3a6;
         }
         .hero-header {
           text-align: left;
@@ -523,10 +561,15 @@ export default function RangeSavingsCalculator() {
             align-items: flex-start;
             margin-bottom: 56px;
           }
+          .brand-img {
+            width: 132px;
+            height: auto;
+          }
           .nav-links {
             width: 100%;
             justify-content: flex-start;
-            gap: 18px;
+            flex-wrap: wrap;
+            gap: 18px 24px;
           }
           .main-layout {
             gap: 40px;
@@ -562,8 +605,20 @@ export default function RangeSavingsCalculator() {
           .top-nav {
             margin-bottom: 40px;
           }
+          .brand-img {
+            width: 124px;
+          }
           .nav-links {
+            width: 100%;
             gap: 14px 18px;
+          }
+          .nav-link {
+            font-size: 15px;
+          }
+          .nav-cta {
+            padding: 14px 22px;
+            min-height: 42px;
+            font-size: 15px;
           }
           .nav-links button {
             width: 100%;
@@ -597,24 +652,19 @@ export default function RangeSavingsCalculator() {
       
       <div className="app-frame">
         <div className="top-nav">
-          <img src={rangeEnergyLogo} alt="Range Energy" style={{ width: '180px', height: 'auto', display: 'block' }} />
+          <a
+            href="https://range-energy-dev-be6d83c64425937e95c1f3.webflow.io/"
+            className="brand-link"
+            aria-label="Range Energy home"
+          >
+            <img src={rangeEnergyLogo} alt="Range Energy" className="brand-img" />
+          </a>
           <div className="nav-links">
-            <span style={{ fontSize: '16px', color: colors.gray900 }}>Calculator</span>
-            <span style={{ fontSize: '16px', color: colors.gray900 }}>Team</span>
-            <span style={{ fontSize: '16px', color: colors.gray900 }}>News</span>
-            <span style={{ fontSize: '16px', color: colors.gray900 }}>Careers</span>
-            <button
-              type="button"
-              style={{
-                border: 'none',
-                background: colors.mint,
-                borderRadius: '50px',
-                padding: '14px 20px',
-                fontSize: '16px',
-                color: colors.gray900,
-                cursor: 'pointer',
-              }}
-            >
+            <a href="#" className="nav-link">Calculator</a>
+            <a href="https://range-energy-dev-be6d83c64425937e95c1f3.webflow.io/team" className="nav-link">Team</a>
+            <a href="https://range-energy-dev-be6d83c64425937e95c1f3.webflow.io/news" className="nav-link">News</a>
+            <a href="https://range-energy-dev-be6d83c64425937e95c1f3.webflow.io/careers" className="nav-link">Careers</a>
+            <button type="button" className="nav-cta">
               Contact Us
             </button>
           </div>
