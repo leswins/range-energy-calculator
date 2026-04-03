@@ -732,7 +732,7 @@ export default function RangeSavingsCalculator() {
               value={dieselPrice}
               onChange={setDieselPrice}
               min={2.5}
-              max={8}
+              max={10}
               step={0.1}
               unit="/gal"
               prefix="$"
@@ -914,27 +914,27 @@ export default function RangeSavingsCalculator() {
                     label="Tractor fuel"
                     baseline={calculations.baseline.tractorFuel}
                     withRange={calculations.withRange.tractorFuel}
-                    maxValue={Math.max(calculations.baseline.tractorFuel, calculations.baseline.total * 0.6)}
+                    maxValue={Math.max(calculations.baseline.tractorFuel, 100000)}
                   />
                   <ComparisonBar
                     label="Tractor & trailer maintenance"
                     baseline={calculations.baseline.tractorMaint}
                     withRange={calculations.withRange.tractorMaint}
-                    maxValue={Math.max(calculations.baseline.tractorFuel, calculations.baseline.total * 0.6)}
+                    maxValue={Math.max(calculations.baseline.tractorMaint, 12000)}
                   />
                   {includeTru && (
                     <>
                       <ComparisonBar
-                        label="TRU fuel (reefer)"
+                        label="TRU fuel vs electricity"
                         baseline={calculations.baseline.truFuel}
                         withRange={calculations.withRange.truFuel}
-                        maxValue={Math.max(calculations.baseline.tractorFuel, calculations.baseline.total * 0.6)}
+                        maxValue={Math.max(calculations.baseline.truFuel, 25000)}
                       />
                       <ComparisonBar
                         label="TRU maintenance"
                         baseline={calculations.baseline.truMaint}
                         withRange={calculations.withRange.truMaint}
-                        maxValue={Math.max(calculations.baseline.tractorFuel, calculations.baseline.total * 0.6)}
+                        maxValue={Math.max(calculations.baseline.truMaint, 10000)}
                       />
                     </>
                   )}
