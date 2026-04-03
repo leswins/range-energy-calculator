@@ -302,8 +302,8 @@ export default function RangeSavingsCalculator() {
     const annualMileage = milesPerDay * annualDaysOfOperation;
     
     // MPG improvement
-    const mpgImprovement = -1 / (1 - 1 / rangeFuelSavingsPercent);
-    const withRangeMpg = baselineMpg * (1 + mpgImprovement);
+    const mpgImprovementFullAssist = -1 / (1 - 1 / rangeFuelSavingsPercent);
+    const withRangeMpgFullAssist = baselineMpg * (1 + mpgImprovementFullAssist);
     
     // Daily fuel calculations
     const baselineDailyFuel = milesPerDay / baselineMpg;
@@ -311,7 +311,7 @@ export default function RangeSavingsCalculator() {
     const reeferKwhRangeReduction = truElectricityDrawKwPerHr * Math.min(truHoursPerDay, 8.0); // assume average truck driver's shift if 8 hrs -- rest of reefing should be on charger
     const realisticMaxPropulsionRange = Math.min(maxPropulsionRange, nomPropulsionRange * (1.0 - reeferKwhRangeReduction/300.0)); // smaller of (300, 350 * (battery % remaining after reefer use))
     const effectiveMiles = Math.min(milesPerDay, realisticMaxPropulsionRange);
-    const dailyFuelSaved = effectiveMiles / baselineMpg - effectiveMiles / withRangeMpg;
+    const dailyFuelSaved = effectiveMiles / baselineMpg - effectiveMiles / withRangeMpgFullAssist;
     
     // Cost per mile
     const electricityCostPerMile = energyConsumptionKwhPerMile * electricityCost / chargerEfficiency;
@@ -367,6 +367,10 @@ export default function RangeSavingsCalculator() {
     // === PAYBACK ===
     const paybackYears = totalAnnualSavings > 0 ? purchasePrice / totalAnnualSavings : Infinity;
     const lifetimeSavings = totalAnnualSavings * assetLifetime;
+
+    // Adjusted mpg
+    const withRangeMpg = annualMileage / Math.max(1.0, ((annualMileage / baselineMpg) - (dailyFuelSaved * annualDaysOfOperation))); // adjusting for mild hybrid (w/ div zero pro)
+    const mpgImprovement = (withRangeMpg / baselineMpg) - 1.0; // mpg improvement (w/ div sero pro)
     
     return {
       annualMileage,
