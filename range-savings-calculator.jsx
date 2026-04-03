@@ -309,7 +309,10 @@ export default function RangeSavingsCalculator() {
     const baselineDailyFuel = milesPerDay / baselineMpg;
 
     const reeferKwhRangeReduction = truElectricityDrawKwPerHr * Math.min(truHoursPerDay, 8.0); // assume average truck driver's shift if 8 hrs -- rest of reefing should be on charger
-    const realisticMaxPropulsionRange = Math.min(maxPropulsionRange, nomPropulsionRange * (1.0 - reeferKwhRangeReduction/300.0)); // smaller of (300, 350 * (battery % remaining after reefer use))
+    const realisticMaxPropulsionRange = includeTru
+                                      ? Math.min(maxPropulsionRange, nomPropulsionRange * (1.0 - reeferKwhRangeReduction/300.0)) // smaller of (300, 350 * (battery % remaining after reefer use))
+                                      : maxPropulsionRange;
+
     const effectiveMiles = Math.min(milesPerDay, realisticMaxPropulsionRange);
     const dailyFuelSaved = effectiveMiles / baselineMpg - effectiveMiles / withRangeMpgFullAssist;
     
@@ -334,9 +337,13 @@ export default function RangeSavingsCalculator() {
     const truMaintSavings = (truDieselModeMaintPerHr - truElectricModeMaintPerHr) * annualTruHours * eTruMaintSavingsCredit;
     
     // === RANGE COSTS ===
-    const rangeElectricityCostTractor = Math.min(milesPerDay, maxPropulsionRange) * annualDaysOfOperation * electricityCostPerMile;
     const rangeElectricityCostTru = truElectricityCostPerHour * truHoursPerDay * annualDaysOfOperation;
-    
+
+
+    const rangeElectricityCostTractor = includeTru
+                                    ? Math.min((300.0 - (truElectricityCostPerHour * Math.min(truHoursPerDay, 8.0))) * electricityCost, effectiveMiles * electricityCostPerMile) * annualDaysOfOperation
+                                    : Math.min(300.0 * electricityCost, effectiveMiles * electricityCostPerMile) * annualDaysOfOperation;
+
     // === NET NEW COSTS WITH RANGE ===
     const netTractorFuel = baselineTractorFuel - tractorDieselSavings + rangeElectricityCostTractor;
     const netTractorMaint = baselineTractorMaint - tractorMaintSavings + rangeMaintCost;
