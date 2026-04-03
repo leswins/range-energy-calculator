@@ -265,7 +265,7 @@ const ComparisonBar = ({ label, baseline, withRange, maxValue }) => {
 export default function RangeSavingsCalculator() {
   // Slider inputs (from spreadsheet [SLIDE BAR] markers)
   const [milesPerDay, setMilesPerDay] = useState(250);
-  const [dieselPrice, setDieselPrice] = useState(3.5);
+  const [dieselPrice, setDieselPrice] = useState(4.0);
   const [electricityCost, setElectricityCost] = useState(0.12);
   const [baselineMpg, setBaselineMpg] = useState(6.2);
   const [truHoursPerDay, setTruHoursPerDay] = useState(14);
@@ -274,13 +274,14 @@ export default function RangeSavingsCalculator() {
   const [includeTru, setIncludeTru] = useState(true);
   const [showDetailedView, setShowDetailedView] = useState(false);
   
-  // Fixed constants from spreadsheet
+// Fixed constants from spreadsheet
   const operatingDaysPerWeek = 6;
   const annualDaysOfOperation = operatingDaysPerWeek * 52;
   const rangeFuelSavingsPercent = 0.35;
   const energyConsumptionKwhPerMile = 0.75;
   const chargerEfficiency = 0.98;
   const maxPropulsionRange = 300;
+  const nomPropulsionRange = 350;
   const assetLifetime = 12;
   const purchasePrice = 100000;
   
@@ -289,7 +290,8 @@ export default function RangeSavingsCalculator() {
   const truElectricityDrawKwPerHr = 8;
   
   // Maintenance constants
-  const truckTrailerMaintCostPerYr = 6000;
+  const truckTrailerMaintCostPerYr = 6000; // annual maintenance at 300 mi/day
+  const truckTrailerMinMaintCostPerYr = 2000; // min annual maintenance 
   const maintSavingsPerMile = 0.02;
   const truDieselModeMaintPerHr = 1.5;
   const truElectricModeMaintPerHr = 0.5;
@@ -305,7 +307,10 @@ export default function RangeSavingsCalculator() {
     
     // Daily fuel calculations
     const baselineDailyFuel = milesPerDay / baselineMpg;
-    const effectiveMiles = Math.min(milesPerDay, maxPropulsionRange);
+
+    const reeferKwhRangeReduction = truElectricityDrawKwPerHr * Math.min(truHoursPerDay, 8.0); // assume average truck driver's shift if 8 hrs -- rest of reefing should be on charger
+    const realisticMaxPropulsionRange = Math.min(maxPropulsionRange, nomPropulsionRange * (1.0 - reeferKwhRangeReduction/300.0)); // smaller of (300, 350 * (battery % remaining after reefer use))
+    const effectiveMiles = Math.min(milesPerDay, realisticMaxPropulsionRange);
     const dailyFuelSaved = effectiveMiles / baselineMpg - effectiveMiles / withRangeMpg;
     
     // Cost per mile
@@ -318,13 +323,13 @@ export default function RangeSavingsCalculator() {
     
     // === BASELINE COSTS ===
     const baselineTractorFuel = annualMileage / baselineMpg * dieselPrice;
-    const baselineTractorMaint = truckTrailerMaintCostPerYr;
+    const baselineTractorMaint = Math.max(truckTrailerMaintCostPerYr * milesPerDay / 250.0, truckTrailerMinMaintCostPerYr); // more mainence the more you drive
     const baselineTruFuel = truDieselConsumptionGalPerHr * truHoursPerDay * annualDaysOfOperation * dieselPrice;
     const baselineTruMaint = truDieselModeMaintPerHr * annualTruHours;
     
     // === SAVINGS ===
     const tractorDieselSavings = dailyFuelSaved * dieselPrice * annualDaysOfOperation;
-    const tractorMaintSavings = maintSavingsPerMile * annualMileage;
+    const tractorMaintSavings = maintSavingsPerMile * milesPerDay * annualDaysOfOperation;
     const truDieselSavings = baselineTruFuel;
     const truMaintSavings = (truDieselModeMaintPerHr - truElectricModeMaintPerHr) * annualTruHours * eTruMaintSavingsCredit;
     
@@ -723,7 +728,7 @@ export default function RangeSavingsCalculator() {
               value={dieselPrice}
               onChange={setDieselPrice}
               min={2.5}
-              max={6}
+              max={8}
               step={0.1}
               unit="/gal"
               prefix="$"
