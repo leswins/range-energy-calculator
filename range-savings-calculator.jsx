@@ -265,7 +265,7 @@ const ComparisonBar = ({ label, baseline, withRange, maxValue }) => {
 export default function RangeSavingsCalculator() {
   // Slider inputs (from spreadsheet [SLIDE BAR] markers)
   const [milesPerDay, setMilesPerDay] = useState(250);
-  const [dieselPrice, setDieselPrice] = useState(3.5);
+  const [dieselPrice, setDieselPrice] = useState(4.0);
   const [electricityCost, setElectricityCost] = useState(0.12);
   const [baselineMpg, setBaselineMpg] = useState(6.2);
   const [truHoursPerDay, setTruHoursPerDay] = useState(14);
@@ -274,13 +274,14 @@ export default function RangeSavingsCalculator() {
   const [includeTru, setIncludeTru] = useState(true);
   const [showDetailedView, setShowDetailedView] = useState(false);
   
-  // Fixed constants from spreadsheet
+// Fixed constants from spreadsheet
   const operatingDaysPerWeek = 6;
   const annualDaysOfOperation = operatingDaysPerWeek * 52;
   const rangeFuelSavingsPercent = 0.35;
   const energyConsumptionKwhPerMile = 0.75;
   const chargerEfficiency = 0.98;
   const maxPropulsionRange = 300;
+  const nomPropulsionRange = 350;
   const assetLifetime = 12;
   const purchasePrice = 100000;
   
@@ -289,7 +290,8 @@ export default function RangeSavingsCalculator() {
   const truElectricityDrawKwPerHr = 8;
   
   // Maintenance constants
-  const truckTrailerMaintCostPerYr = 6000;
+  const truckTrailerMaintCostPerYr = 6000; // annual maintenance at 300 mi/day
+  const truckTrailerMinMaintCostPerYr = 2000; // min annual maintenance 
   const maintSavingsPerMile = 0.02;
   const truDieselModeMaintPerHr = 1.5;
   const truElectricModeMaintPerHr = 0.5;
@@ -300,13 +302,19 @@ export default function RangeSavingsCalculator() {
     const annualMileage = milesPerDay * annualDaysOfOperation;
     
     // MPG improvement
-    const mpgImprovement = -1 / (1 - 1 / rangeFuelSavingsPercent);
-    const withRangeMpg = baselineMpg * (1 + mpgImprovement);
+    const mpgImprovementFullAssist = -1 / (1 - 1 / rangeFuelSavingsPercent);
+    const withRangeMpgFullAssist = baselineMpg * (1 + mpgImprovementFullAssist);
     
     // Daily fuel calculations
     const baselineDailyFuel = milesPerDay / baselineMpg;
-    const effectiveMiles = Math.min(milesPerDay, maxPropulsionRange);
-    const dailyFuelSaved = effectiveMiles / baselineMpg - effectiveMiles / withRangeMpg;
+
+    const reeferKwhRangeReduction = truElectricityDrawKwPerHr * Math.min(truHoursPerDay, 8.0); // assume average truck driver's shift if 8 hrs -- rest of reefing should be on charger
+    const realisticMaxPropulsionRange = includeTru
+                                      ? Math.min(maxPropulsionRange, nomPropulsionRange * (1.0 - reeferKwhRangeReduction/300.0)) // smaller of (300, 350 * (battery % remaining after reefer use))
+                                      : maxPropulsionRange;
+
+    const effectiveMiles = Math.min(milesPerDay, realisticMaxPropulsionRange);
+    const dailyFuelSaved = effectiveMiles / baselineMpg - effectiveMiles / withRangeMpgFullAssist;
     
     // Cost per mile
     const electricityCostPerMile = energyConsumptionKwhPerMile * electricityCost / chargerEfficiency;
@@ -318,20 +326,24 @@ export default function RangeSavingsCalculator() {
     
     // === BASELINE COSTS ===
     const baselineTractorFuel = annualMileage / baselineMpg * dieselPrice;
-    const baselineTractorMaint = truckTrailerMaintCostPerYr;
+    const baselineTractorMaint = Math.max(truckTrailerMaintCostPerYr * milesPerDay / 250.0, truckTrailerMinMaintCostPerYr); // more mainence the more you drive
     const baselineTruFuel = truDieselConsumptionGalPerHr * truHoursPerDay * annualDaysOfOperation * dieselPrice;
     const baselineTruMaint = truDieselModeMaintPerHr * annualTruHours;
     
     // === SAVINGS ===
     const tractorDieselSavings = dailyFuelSaved * dieselPrice * annualDaysOfOperation;
-    const tractorMaintSavings = maintSavingsPerMile * annualMileage;
+    const tractorMaintSavings = maintSavingsPerMile * milesPerDay * annualDaysOfOperation;
     const truDieselSavings = baselineTruFuel;
     const truMaintSavings = (truDieselModeMaintPerHr - truElectricModeMaintPerHr) * annualTruHours * eTruMaintSavingsCredit;
     
     // === RANGE COSTS ===
-    const rangeElectricityCostTractor = Math.min(milesPerDay, maxPropulsionRange) * annualDaysOfOperation * electricityCostPerMile;
     const rangeElectricityCostTru = truElectricityCostPerHour * truHoursPerDay * annualDaysOfOperation;
-    
+
+
+    const rangeElectricityCostTractor = includeTru
+                                    ? Math.min((300.0 - (truElectricityCostPerHour * Math.min(truHoursPerDay, 8.0))) * electricityCost, effectiveMiles * electricityCostPerMile) * annualDaysOfOperation
+                                    : Math.min(300.0 * electricityCost, effectiveMiles * electricityCostPerMile) * annualDaysOfOperation;
+
     // === NET NEW COSTS WITH RANGE ===
     const netTractorFuel = baselineTractorFuel - tractorDieselSavings + rangeElectricityCostTractor;
     const netTractorMaint = baselineTractorMaint - tractorMaintSavings + rangeMaintCost;
@@ -362,6 +374,10 @@ export default function RangeSavingsCalculator() {
     // === PAYBACK ===
     const paybackYears = totalAnnualSavings > 0 ? purchasePrice / totalAnnualSavings : Infinity;
     const lifetimeSavings = totalAnnualSavings * assetLifetime;
+
+    // Adjusted mpg
+    const withRangeMpg = annualMileage / Math.max(1.0, ((annualMileage / baselineMpg) - (dailyFuelSaved * annualDaysOfOperation))); // adjusting for mild hybrid (w/ div zero pro)
+    const mpgImprovement = (withRangeMpg / baselineMpg) - 1.0; // mpg improvement (w/ div sero pro)
     
     return {
       annualMileage,
@@ -723,7 +739,7 @@ export default function RangeSavingsCalculator() {
               value={dieselPrice}
               onChange={setDieselPrice}
               min={2.5}
-              max={6}
+              max={10}
               step={0.1}
               unit="/gal"
               prefix="$"
@@ -905,27 +921,27 @@ export default function RangeSavingsCalculator() {
                     label="Tractor fuel"
                     baseline={calculations.baseline.tractorFuel}
                     withRange={calculations.withRange.tractorFuel}
-                    maxValue={Math.max(calculations.baseline.tractorFuel, calculations.baseline.total * 0.6)}
+                    maxValue={Math.max(calculations.baseline.tractorFuel, 100000)}
                   />
                   <ComparisonBar
                     label="Tractor & trailer maintenance"
                     baseline={calculations.baseline.tractorMaint}
                     withRange={calculations.withRange.tractorMaint}
-                    maxValue={Math.max(calculations.baseline.tractorFuel, calculations.baseline.total * 0.6)}
+                    maxValue={Math.max(calculations.baseline.tractorMaint, 12000)}
                   />
                   {includeTru && (
                     <>
                       <ComparisonBar
-                        label="TRU fuel (reefer)"
+                        label="TRU fuel vs electricity"
                         baseline={calculations.baseline.truFuel}
                         withRange={calculations.withRange.truFuel}
-                        maxValue={Math.max(calculations.baseline.tractorFuel, calculations.baseline.total * 0.6)}
+                        maxValue={Math.max(calculations.baseline.truFuel, 25000)}
                       />
                       <ComparisonBar
                         label="TRU maintenance"
                         baseline={calculations.baseline.truMaint}
                         withRange={calculations.withRange.truMaint}
-                        maxValue={Math.max(calculations.baseline.tractorFuel, calculations.baseline.total * 0.6)}
+                        maxValue={Math.max(calculations.baseline.truMaint, 10000)}
                       />
                     </>
                   )}
