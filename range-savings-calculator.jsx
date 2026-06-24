@@ -23,6 +23,14 @@ const colors = {
   gray200: '#d9e1e7',
 };
 
+const RANGE_PRODUCTION_SITE = 'https://www.range.energy';
+const navUrls = {
+  home: `${RANGE_PRODUCTION_SITE}/`,
+  team: `${RANGE_PRODUCTION_SITE}/team`,
+  news: `${RANGE_PRODUCTION_SITE}/news`,
+  careers: `${RANGE_PRODUCTION_SITE}/careers`,
+};
+
 const formatCurrency = (val) => {
   const rounded = Math.round(val);
   return rounded < 0 
@@ -669,7 +677,7 @@ export default function RangeSavingsCalculator() {
       <div className="app-frame">
         <div className="top-nav">
           <a
-            href="https://range-energy-dev-be6d83c64425937e95c1f3.webflow.io/"
+            href={navUrls.home}
             className="brand-link"
             aria-label="Range Energy home"
           >
@@ -677,9 +685,9 @@ export default function RangeSavingsCalculator() {
           </a>
           <div className="nav-links">
             <a href="#" className="nav-link">Calculator</a>
-            <a href="https://range-energy-dev-be6d83c64425937e95c1f3.webflow.io/team" className="nav-link">Team</a>
-            <a href="https://range-energy-dev-be6d83c64425937e95c1f3.webflow.io/news" className="nav-link">News</a>
-            <a href="https://range-energy-dev-be6d83c64425937e95c1f3.webflow.io/careers" className="nav-link">Careers</a>
+            <a href={navUrls.team} className="nav-link">Team</a>
+            <a href={navUrls.news} className="nav-link">News</a>
+            <a href={navUrls.careers} className="nav-link">Careers</a>
             <button type="button" className="nav-cta">
               Contact Us
             </button>
