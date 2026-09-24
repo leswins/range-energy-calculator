@@ -273,7 +273,7 @@ const ComparisonBar = ({ label, baseline, withRange, maxValue }) => {
 export default function RangeSavingsCalculator() {
   // Slider inputs (from spreadsheet [SLIDE BAR] markers)
   const [milesPerDay, setMilesPerDay] = useState(250);
-  const [dieselPrice, setDieselPrice] = useState(5.60);
+  const [dieselPrice, setDieselPrice] = useState(6.50);
   const [electricityCost, setElectricityCost] = useState(0.12);
   const [baselineMpg, setBaselineMpg] = useState(6.2);
   const [truHoursPerDay, setTruHoursPerDay] = useState(14);
@@ -826,7 +826,7 @@ export default function RangeSavingsCalculator() {
             </div>
 
             <div style={{ fontSize: '12px', color: colors.gray900, marginTop: '16px', lineHeight: 1.4 }}>
-              National average diesel price is $5.60 as of 5/18/2026 according to the{' '}
+              National average diesel price is $6.52 as of 9/21/2026 according to the{' '}
               <a
                 href="https://www.eia.gov/petroleum/gasdiesel/"
                 target="_blank"
